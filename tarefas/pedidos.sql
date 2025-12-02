@@ -1,7 +1,7 @@
 CREATE DATABASE tarefaPedido;
 USE tarefaPedido;
 
---TABELA CLIENTE
+#TABELA CLIENTE
 CREATE TABLE cliente (
   idCliente INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
   nomeCliente VARCHAR(55) NOT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE cliente (
   cidade VARCHAR(50) NOT NULL
 );
 
---DADOS TABELA CLIENTE
+#DADOS TABELA CLIENTE
 INSERT INTO cliente VALUES
 (0, 'Heloisa Silva', 'heloisasilva@gmail.com','Curitiba'),
 (0, 'Arthur Rodrigues', 'arthrodrigues@gmail.com', 'Avaré'),
@@ -20,86 +20,84 @@ INSERT INTO cliente VALUES
 
 SELECT * FROM cliente;
 
---TABELA PEDIDO
+#TABELA PEDIDO
 CREATE TABLE pedido(
   idPedido INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
   idCliente INT NOT NULL,
   FOREIGN KEY (idCliente) REFERENCES cliente(idCliente),
   dataPedido TIMESTAMP DEFAULT current_timestamp,
   valorTotal DECIMAL(10,2) NOT NULL,
-  statusPedido ENUM ('Concluído', 'Pedente', 'Cancelado') DEFAULT 'Pendente'
+  statusPedido ENUM('Concluído', 'Pedente', 'Cancelado')
 );
 
---DADOS TABELA PEDIDOS
+#DADOS TABELA PEDIDOS
 INSERT INTO pedido VALUES
-(0, 1, '2022-09-14', 257.99, 'Concluído'),
-(0, 2, '2023-06-28', 1499.90, 'Concluído'),
-(0, 3, '2024-02-06', 586.50, 'Cancelado'),
-(0, 4, '2024-05-01', 199.90, 'Pendente'),
-(0, 5, '2025-01-01', 476.90, 'Concluído'),
-(0, 6, '2025-03-07', 967.25, 'Concluído'),
-(0, 3, '2025-06-12', 2788.80, 'Cancelado'),
-(0, 5, '2025-08-25', 49.99, 'Pendente');
+(0, 1, '2022-09-14', 257.99, 1),
+(0, 2, '2023-06-28', 1499.90, 1),
+(0, 3, '2024-02-06', 586.50, 3),
+(0, 4, '2024-05-01', 199.90, 2),
+(0, 5, '2025-01-01', 476.90, 1),
+(0, 6, '2025-03-07', 967.25, 1),
+(0, 3, '2025-06-12', 2788.80, 3),
+(0, 5, '2025-08-25', 49.99, 2);
 
 SELECT * FROM pedido;
 
---NOME DO CLIENTE E DATA DO PEDIDO
+#NOME DO CLIENTE E DATA DO PEDIDO
 SELECT nomeCliente, dataPedido
 FROM cliente c
 INNER JOIN pedido p
 ON c.idCliente=p.idCliente;
 
---CLIENTE INICIAL J
+#CLIENTE INICIAL J
 SELECT * FROM cliente WHERE nomeCliente LIKE 'J%';
 
---PEDIDDOS STATUS CONCLUÍDO OU CANCELADO
-SELECT * FROM pedido WHERE statusPedido IN('Concluído', 'Cancelado');
+#PEDIDDOS STATUS CONCLUÍDO OU CANCELADO
+SELECT * FROM pedido WHERE statusPedido IN(1, 3);
 
---NOME DO CLIENTE E VALOR DE PEDIDOS MAIROES QUE 500 COM STATUS CONCLUÍDO OU CLIENTE MORE EM SÃO PAULO
-SELECT nomeCliente, valorPedido
+#NOME DO CLIENTE E VALOR DE PEDIDOS MAIROES QUE 500 COM STATUS CONCLUÍDO OU CLIENTE MORE EM SÃO PAULO
+SELECT nomeCliente, valorTotal
 FROM cliente c
 INNER JOIN pedido p
 ON c.idCliente=p.idCliente
 WHERE valorTotal>500
-AND statusPedido='Concluído'
-OR cidade='São Paulo';
+AND (statusPedido=1
+OR cidade='São Paulo');
 
---DATA E VALOR DO PEDIDO DO CLIENTE COM ID 3 EM ORDEM DECRESCENTE
+#DATA E VALOR DO PEDIDO DO CLIENTE COM ID 3 EM ORDEM DECRESCENTE
 SELECT dataPedido, valorTotal
-FROM cliente c
-INNER JOIN pedido p
-ON c.idCliente=p.idCliente
-WHERE idCliente=3
+FROM pedido p
+WHERE idCliente= 3
 ORDER BY valorTotal DESC;
 
---ID PEDIDO E VALOR DE PEDIDOS ONDE CLIENTE MORE NO RIO DE JANEIRO
+#ID PEDIDO E VALOR DE PEDIDOS ONDE CLIENTE MORE NO RIO DE JANEIRO
 SELECT idPedido, valorTotal
 FROM pedido p
 INNER JOIN cliente c
 ON p.idCliente=c.idCliente
 WHERE cidade='Rio de Janeiro';
 
---NOME DOS CLIENTES EM ORDEM ALFABÉTICA
-SELECT * FROM cliente ORDER BY nomeCliente ASC;
+#NOME DOS CLIENTES EM ORDEM ALFABÉTICA
+SELECT nomeCliente FROM cliente ORDER BY nomeCliente ASC;
 
---NOME DO CLIENTE E DATA DOS PEDIDOS A PARTIR DE 01/01/2023
+#NOME DO CLIENTE E DATA DOS PEDIDOS A PARTIR DE 01/01/2023
 SELECT nomeCliente, dataPedido
 FROM cliente c
 INNER JOIN pedido p
 ON c.idCliente=p.idCliente
 WHERE dataPedido>'2023-01-01';
 
---ID PEDIDO E VALOR DO PEDIDO ONDE CLIENTE POSSUA SILVA NO NOME
+#ID PEDIDO E VALOR DO PEDIDO ONDE CLIENTE POSSUA SILVA NO NOME
 SELECT idPedido, valorTotal
 FROM pedido p
 INNER JOIN cliente c
-ON p.idPedido=c.idCliente
+ON p.idCliente=c.idCliente
 WHERE nomeCliente LIKE '%Silva';
 
---NOME DO CLIENTE E VALOR DO PEDIDO ONDE STATUS É PENDENTE E VALOR É MAIOR QUE 100
+#NOME DO CLIENTE E VALOR DO PEDIDO ONDE STATUS É PENDENTE E VALOR É MAIOR QUE 100
 SELECT nomeCliente, valorTotal
 FROM cliente c
 INNER JOIN pedido p
 ON c.idCliente=p.idCliente
-WHERE statusPedido='Pendente'
+WHERE statusPedido=2
 AND valorTotal>100;
